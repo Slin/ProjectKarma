@@ -3,7 +3,7 @@
 #include "ProjectKarma.h"
 #include "PKPlayer.h"
 #include "PKPlayerMovementComponent.h"
-
+#include "Runtime/Core/Public/Math/UnrealMathVectorConstants.h"
 
 // Sets default values
 APKPlayer::APKPlayer() : totalTime(0.0f)
@@ -100,7 +100,7 @@ void APKPlayer::MoveRight(float AxisValue)
 		
 		if(state != State::Spirit && fabsf(AxisValue) > 0.1f)
 		{
-			MeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), (AxisValue < 0.0f)?0.0f:M_PI));
+			MeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), (AxisValue < 0.0f)?0.0f:PI));
 		}
 	}
 }
