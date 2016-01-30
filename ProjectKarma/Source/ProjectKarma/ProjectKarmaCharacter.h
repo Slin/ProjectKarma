@@ -29,6 +29,10 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
+	
+	virtual void Tick(float DeltaSeconds) override;
+	
+	float totalTime;
 
 
 public:

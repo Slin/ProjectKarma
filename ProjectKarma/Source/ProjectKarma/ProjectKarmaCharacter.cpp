@@ -72,3 +72,9 @@ void AProjectKarmaCharacter::TouchStopped(const ETouchIndex::Type FingerIndex, c
 	StopJumping();
 }
 
+void AProjectKarmaCharacter::Tick(float DeltaSeconds)
+{
+	totalTime += DeltaSeconds*3.0f;
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, cos(totalTime)*20.0f+50.0f));
+}
+
