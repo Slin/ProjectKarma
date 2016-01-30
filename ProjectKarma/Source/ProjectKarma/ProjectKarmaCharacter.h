@@ -12,11 +12,30 @@ class AProjectKarmaCharacter : public ACharacter
 	class UCameraComponent* SideViewCameraComponent;
 
 	/** Camera boom positioning the camera beside the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true")) class USpringArmComponent* CameraBoom;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MesheSpirit, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *SpiritMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MesheSpirit, meta = (AllowPrivateAccess = "true")) class UMaterial *SpiritMaterial;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshArmadillo, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *ArmadilloMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshArmadillo, meta = (AllowPrivateAccess = "true")) class UMaterial *ArmadilloMaterial;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshJaguar, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *JaguarMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshJaguar, meta = (AllowPrivateAccess = "true")) class UMaterial *JaguarMaterial;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshBison, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *BisonMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MeshBison, meta = (AllowPrivateAccess = "true")) class UMaterial *BisonMaterial;
 
 protected:
 
+	enum State
+	{
+		Spirit,
+		Armadillo,
+		Jaguar,
+		Bison
+	};
+	
 	/** Called for side to side input */
 	void MoveRight(float Val);
 
@@ -25,6 +44,13 @@ protected:
 
 	/** Handle touch stop event. */
 	void TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location);
+	
+	
+	void SpiritPressed();
+	void ArmadilloPressed();
+	void JaguarPressed();
+	void BisonPressed();
+	void SwitchToState(State state);
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -33,6 +59,8 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	float totalTime;
+	
+	State state;
 
 
 public:

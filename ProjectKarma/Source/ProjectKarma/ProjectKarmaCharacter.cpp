@@ -39,6 +39,8 @@ AProjectKarmaCharacter::AProjectKarmaCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	
+	SwitchToState(State::Spirit);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,6 +52,11 @@ void AProjectKarmaCharacter::SetupPlayerInputComponent(class UInputComponent* In
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	InputComponent->BindAxis("MoveRight", this, &AProjectKarmaCharacter::MoveRight);
+	
+	InputComponent->BindAction("Spirit", IE_Pressed, this, &AProjectKarmaCharacter::SpiritPressed);
+	InputComponent->BindAction("Armadillo", IE_Pressed, this, &AProjectKarmaCharacter::ArmadilloPressed);
+	InputComponent->BindAction("Jaguar", IE_Pressed, this, &AProjectKarmaCharacter::JaguarPressed);
+	InputComponent->BindAction("Bison", IE_Pressed, this, &AProjectKarmaCharacter::BisonPressed);
 
 	InputComponent->BindTouch(IE_Pressed, this, &AProjectKarmaCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &AProjectKarmaCharacter::TouchStopped);
@@ -72,9 +79,73 @@ void AProjectKarmaCharacter::TouchStopped(const ETouchIndex::Type FingerIndex, c
 	StopJumping();
 }
 
+void AProjectKarmaCharacter::SpiritPressed()
+{
+	SwitchToState(State::Spirit);
+}
+
+void AProjectKarmaCharacter::ArmadilloPressed()
+{
+	SwitchToState(State::Armadillo);
+}
+
+void AProjectKarmaCharacter::JaguarPressed()
+{
+	SwitchToState(State::Jaguar);
+}
+
+void AProjectKarmaCharacter::BisonPressed()
+{
+	SwitchToState(State::Bison);
+}
+
+void AProjectKarmaCharacter::SwitchToState(State state)
+{
+	this->state = state;
+	
+	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	
+	switch(state)
+	{
+		case State::Spirit:
+		{
+			GetMesh()->SetSkeletalMesh(SpiritMesh);
+			GetMesh()->SetMaterial(0, SpiritMaterial);
+			GetCapsuleComponent()->SetCapsuleSize(50, 100);
+			break;
+		}
+		case State::Armadillo:
+		{
+			GetMesh()->SetSkeletalMesh(ArmadilloMesh);
+			GetMesh()->SetMaterial(0, ArmadilloMaterial);
+			GetCapsuleComponent()->SetCapsuleSize(10, 20);
+			break;
+		}
+		case State::Jaguar:
+		{
+			GetMesh()->SetSkeletalMesh(JaguarMesh);
+			GetMesh()->SetMaterial(0, JaguarMaterial);
+			break;
+		}
+		case State::Bison:
+		{
+			GetMesh()->SetSkeletalMesh(BisonMesh);
+			GetMesh()->SetMaterial(0, BisonMaterial);
+			break;
+		}
+	}
+}
+
 void AProjectKarmaCharacter::Tick(float DeltaSeconds)
 {
-	totalTime += DeltaSeconds*3.0f;
-	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, cos(totalTime)*20.0f+50.0f));
+	switch(state)
+	{
+		case State::Spirit:
+		{
+			totalTime += DeltaSeconds*4.0f;
+			GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, cos(totalTime)*20.0f+70.0f));
+			break;
+		}
+	}
 }
 
