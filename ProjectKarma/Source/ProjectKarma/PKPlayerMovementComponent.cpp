@@ -38,5 +38,6 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	if (GravityHit.IsValidBlockingHit())
 	{
 		SlideAlongSurface(DesiredGravityMovement, 1.f - GravityHit.Time, GravityHit.Normal, GravityHit);
+		_gravity = 0.0f;
 	}
 };

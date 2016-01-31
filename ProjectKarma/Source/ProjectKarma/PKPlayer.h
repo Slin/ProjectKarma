@@ -33,20 +33,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshSpirit, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *SpiritMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MesheSpirit, meta = (AllowPrivateAccess = "true")) class UMaterial *SpiritMaterial;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes, meta = (AllowPrivateAccess = "true")) USkeletalMeshComponent *SpiritMeshComponent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshArmadillo, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *ArmadilloMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshArmadillo, meta = (AllowPrivateAccess = "true")) class UMaterial *ArmadilloMaterial;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes, meta = (AllowPrivateAccess = "true")) USkeletalMeshComponent *ArmadilloMeshComponent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshJaguar, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *JaguarMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshJaguar, meta = (AllowPrivateAccess = "true")) class UMaterial *JaguarMaterial;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes, meta = (AllowPrivateAccess = "true")) USkeletalMeshComponent *PumaMeshComponent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshBison, meta = (AllowPrivateAccess = "true")) class USkeletalMesh *BisonMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeshBison, meta = (AllowPrivateAccess = "true")) class UMaterial *BisonMaterial;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes, meta = (AllowPrivateAccess = "true")) USkeletalMeshComponent *BisonMeshComponent;
 	
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Anims) UBlendSpace *BlendSpace;
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Anims) UAnimSequence *AnimSequence;
 
 	
 	virtual UPawnMovementComponent* GetMovementComponent() const override;
@@ -64,9 +58,9 @@ public:
 	UCameraComponent* OurCamera;
 	
 	UBoxComponent* BoxComponent;
-	USkeletalMeshComponent *MeshComponent;
 	class UPKPlayerMovementComponent *MovementComponent;
 	
 	float totalTime;
 	State state;
+	FVector currentCollisionBoxSize;
 };

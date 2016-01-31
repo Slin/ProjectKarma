@@ -3,7 +3,10 @@
 #include "ProjectKarma.h"
 #include "PKPlayer.h"
 #include "PKPlayerMovementComponent.h"
-#include "Runtime/Core/Public/Math/UnrealMathVectorConstants.h"
+#include "PKAnimationInstance.h"
+#include "Runtime/Engine/Classes/Animation/AnimInstance.h"
+#include "Runtime/Engine/Classes/Animation/AnimBlueprint.h"
+#include "Runtime/Engine/Classes/Animation/AnimBlueprintGeneratedClass.h"
 
 // Sets default values
 APKPlayer::APKPlayer() : totalTime(0.0f)
@@ -17,8 +20,18 @@ APKPlayer::APKPlayer() : totalTime(0.0f)
 	BoxComponent->InitBoxExtent(FVector(50.0f, 50.0f, 100.0f));
 	BoxComponent->SetCollisionProfileName(TEXT("Pawn"));
 	
-	MeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("VisualRepresentation"));
-	MeshComponent->AttachTo(RootComponent);
+	SpiritMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SpiritRepresentation"));
+	SpiritMeshComponent->AttachTo(RootComponent);
+	SpiritMeshComponent->SetRelativeScale3D(FVector(0.5f));
+	
+	ArmadilloMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ArmadilloRepresentation"));
+	ArmadilloMeshComponent->AttachTo(RootComponent);
+	
+	PumaMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PumaRepresentation"));
+	PumaMeshComponent->AttachTo(RootComponent);
+	
+	BisonMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BisonRepresentation"));
+	BisonMeshComponent->AttachTo(RootComponent);
 	
 	//Create our components
 	OurCameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArm"));
@@ -26,7 +39,7 @@ APKPlayer::APKPlayer() : totalTime(0.0f)
 	OurCameraSpringArm->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 0.0f, 0.0f));
 	OurCameraSpringArm->TargetArmLength = 500.f;
 	OurCameraSpringArm->bEnableCameraLag = true;
-	OurCameraSpringArm->CameraLagSpeed = 3.0f;
+	OurCameraSpringArm->CameraLagSpeed = 5.0f;
 
 	OurCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("GameCamera"));
 	OurCamera->AttachTo(OurCameraSpringArm, USpringArmComponent::SocketName);
@@ -36,17 +49,6 @@ APKPlayer::APKPlayer() : totalTime(0.0f)
 	// Create an instance of our movement component, and tell it to update the root.
 	MovementComponent = CreateDefaultSubobject<UPKPlayerMovementComponent>(TEXT("CustomMovementComponent"));
 	MovementComponent->UpdatedComponent = RootComponent;
-	
-	
-	// Configure character movement
-/*	MovementComponent->bOrientRotationToMovement = true; // Face in the direction we are moving..
-	MovementComponent->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
-	MovementComponent->GravityScale = 2.f;
-	MovementComponent->AirControl = 0.80f;
-	MovementComponent->JumpZVelocity = 1000.f;
-	MovementComponent->GroundFriction = 3.f;
-	MovementComponent->MaxWalkSpeed = 600.f;
-	MovementComponent->MaxFlySpeed = 600.f;*/
 }
 
 // Called when the game starts or when spawned
@@ -67,7 +69,7 @@ void APKPlayer::Tick(float DeltaTime)
 		case State::Spirit:
 		{
 			totalTime += DeltaTime*4.0f;
-			MeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, cos(totalTime)*20.0f+70.0f));
+			SpiritMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, cos(totalTime)*20.0f+0.0f));
 			break;
 		}
 	}
@@ -98,9 +100,12 @@ void APKPlayer::MoveRight(float AxisValue)
 	{
 		MovementComponent->AddInputVector(GetActorRightVector() * -AxisValue);
 		
-		if(state != State::Spirit && fabsf(AxisValue) > 0.1f)
+		if(fabsf(AxisValue) > 0.1f)
 		{
-			MeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), (AxisValue < 0.0f)?0.0f:PI));
+			float angle = (AxisValue < 0.0f)?0.0f:PI;
+			ArmadilloMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
+			PumaMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
+			BisonMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
 		}
 	}
 }
@@ -129,44 +134,62 @@ void APKPlayer::SwitchToState(State stateParam)
 {
 	state = stateParam;
 	
-	MeshComponent->SetWorldScale3D(FVector(1.0f));
 	FVector boxSize;
+	
+	SpiritMeshComponent->SetVisibility(stateParam == State::Spirit);
+	ArmadilloMeshComponent->SetVisibility(stateParam == State::Armadillo);
+	PumaMeshComponent->SetVisibility(stateParam == State::Jaguar);
+	BisonMeshComponent->SetVisibility(stateParam == State::Bison);
 	
 	switch(stateParam)
 	{
 		case State::Spirit:
 		{
-			MeshComponent->SetSkeletalMesh(SpiritMesh);
-			MeshComponent->SetMaterial(0, SpiritMaterial);
-			MeshComponent->SetRelativeScale3D(FVector(0.5f));
 			boxSize = FVector(50.0f, 50.0f, 100.0f);
 			break;
 		}
 		case State::Armadillo:
 		{
-			MeshComponent->SetSkeletalMesh(ArmadilloMesh);
-			MeshComponent->SetMaterial(0, ArmadilloMaterial);
 			boxSize = FVector(40.0f, 20.0f, 13.5f);
+			ArmadilloMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
+			
 			break;
 		}
 		case State::Jaguar:
 		{
-			MeshComponent->SetSkeletalMesh(JaguarMesh);
-			MeshComponent->SetMaterial(0, JaguarMaterial);
 			boxSize = FVector(85.0f, 28.0f, 37.0f);
+			PumaMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
+			
+/*			UAnimBlueprintGeneratedClass* armAnimBPGC = Cast<UAnimBlueprintGeneratedClass>(StaticLoadObject(UAnimBlueprintGeneratedClass::StaticClass(), NULL, TEXT("/Game/Character/pumaAnimBlueprint")));
+			if (armAnimBPGC)
+			{
+				MeshComponent->AnimBlueprintGeneratedClass = armAnimBPGC;
+			}*/
+			
+			
+			/*UPKAnimationInstance *AnimInst = (UPKAnimationInstance*)MeshComponent->GetAnimInstance();
+			 if(AnimInst)
+			 {
+				 AnimInst->Running = 0.5f;
+				//AnimInst->Play
+			 }*/
+			
 			break;
 		}
 		case State::Bison:
 		{
-			MeshComponent->SetSkeletalMesh(BisonMesh);
-			MeshComponent->SetMaterial(0, BisonMaterial);
 			boxSize = FVector(125, 50.0f, 75.0f);
+			BisonMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
 			break;
 		}
 	}
 	
+	float heightDiff = boxSize.Z - currentCollisionBoxSize.Z;
+	if(heightDiff > 0)
+		GetRootComponent()->AddWorldOffset(FVector(0.0f, 0.0f, heightDiff));
+	
 	BoxComponent->SetBoxExtent(boxSize);
-	MeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
+	currentCollisionBoxSize = boxSize;
 }
 
 
