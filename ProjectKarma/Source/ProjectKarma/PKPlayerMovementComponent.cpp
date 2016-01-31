@@ -14,7 +14,7 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	}
 	
 	// Get (and then clear) the movement vector that we set in ACollidingPawn::Tick
-	FVector DesiredMovementThisFrame = ConsumeInputVector().GetClampedToMaxSize(1.0f) * DeltaTime * 150.0f;
+	FVector DesiredMovementThisFrame = ConsumeInputVector() * DeltaTime * 150.0f;
 	
 	if(!DesiredMovementThisFrame.IsNearlyZero())
 	{

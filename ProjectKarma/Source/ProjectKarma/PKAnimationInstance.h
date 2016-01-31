@@ -14,6 +14,6 @@ class UPKAnimationInstance : public UAnimInstance
 	GENERATED_UCLASS_BODY()
  
 public:
-	/** Left Lower Leg Offset From Ground, Set in Character.cpp Tick */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Anims) float Running;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Anims) float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Anims) uint8 State;
 };

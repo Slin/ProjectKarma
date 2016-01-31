@@ -9,7 +9,7 @@
 #include "Runtime/Engine/Classes/Animation/AnimBlueprintGeneratedClass.h"
 
 // Sets default values
-APKPlayer::APKPlayer() : totalTime(0.0f)
+APKPlayer::APKPlayer() : totalTime(0.0f), movementSpeed(2.0f)
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -98,7 +98,13 @@ void APKPlayer::MoveRight(float AxisValue)
 {
 	if(MovementComponent && (MovementComponent->UpdatedComponent == RootComponent))
 	{
-		MovementComponent->AddInputVector(GetActorRightVector() * -AxisValue);
+		MovementComponent->AddInputVector(GetActorRightVector() * -AxisValue * movementSpeed);
+		
+		UPKAnimationInstance *pumaAnimInstance = Cast<UPKAnimationInstance>(PumaMeshComponent->GetAnimInstance());
+		
+		UPKAnimationInstance *bisonAnimInstance = Cast<UPKAnimationInstance>(BisonMeshComponent->GetAnimInstance());
+		
+		UPKAnimationInstance *armadilloAnimInstance = Cast<UPKAnimationInstance>(ArmadilloMeshComponent->GetAnimInstance());
 		
 		if(fabsf(AxisValue) > 0.1f)
 		{
@@ -106,6 +112,21 @@ void APKPlayer::MoveRight(float AxisValue)
 			ArmadilloMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
 			PumaMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
 			BisonMeshComponent->SetWorldRotation(FQuat(FVector(0.0f, 0.0f, 1.0f), angle));
+			
+			pumaAnimInstance->Speed = fabsf(AxisValue)*movementSpeed;
+			pumaAnimInstance->State = 1;
+			
+			bisonAnimInstance->Speed = fabsf(AxisValue)*movementSpeed*0.5f;
+			bisonAnimInstance->State = 1;
+			
+			armadilloAnimInstance->Speed = fabsf(AxisValue)*movementSpeed*0.2f;
+			armadilloAnimInstance->State = 1;
+		}
+		else
+		{
+			pumaAnimInstance->State = 0;
+			bisonAnimInstance->State = 0;
+			armadilloAnimInstance->State = 0;
 		}
 	}
 }
@@ -146,12 +167,14 @@ void APKPlayer::SwitchToState(State stateParam)
 		case State::Spirit:
 		{
 			boxSize = FVector(50.0f, 50.0f, 100.0f);
+			movementSpeed = 1.5f;
 			break;
 		}
 		case State::Armadillo:
 		{
 			boxSize = FVector(40.0f, 20.0f, 13.5f);
 			ArmadilloMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
+			movementSpeed = 2.0f;
 			
 			break;
 		}
@@ -159,27 +182,14 @@ void APKPlayer::SwitchToState(State stateParam)
 		{
 			boxSize = FVector(85.0f, 28.0f, 37.0f);
 			PumaMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
-			
-/*			UAnimBlueprintGeneratedClass* armAnimBPGC = Cast<UAnimBlueprintGeneratedClass>(StaticLoadObject(UAnimBlueprintGeneratedClass::StaticClass(), NULL, TEXT("/Game/Character/pumaAnimBlueprint")));
-			if (armAnimBPGC)
-			{
-				MeshComponent->AnimBlueprintGeneratedClass = armAnimBPGC;
-			}*/
-			
-			
-			/*UPKAnimationInstance *AnimInst = (UPKAnimationInstance*)MeshComponent->GetAnimInstance();
-			 if(AnimInst)
-			 {
-				 AnimInst->Running = 0.5f;
-				//AnimInst->Play
-			 }*/
-			
+			movementSpeed = 3.0f;
 			break;
 		}
 		case State::Bison:
 		{
 			boxSize = FVector(125, 50.0f, 75.0f);
 			BisonMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
+			movementSpeed = 2.0f;
 			break;
 		}
 	}

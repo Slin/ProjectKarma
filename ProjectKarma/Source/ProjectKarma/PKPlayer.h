@@ -63,4 +63,5 @@ public:
 	float totalTime;
 	State state;
 	FVector currentCollisionBoxSize;
+	float movementSpeed;
 };
