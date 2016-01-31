@@ -16,6 +16,9 @@ class PROJECTKARMA_API UPKPlayerMovementComponent : public UPawnMovementComponen
 public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	
+	void Jump(float strength);
+	
 private:
 	float _gravity;
+	bool _isGrounded;
 };

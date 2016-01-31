@@ -87,6 +87,7 @@ void APKPlayer::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 	
 	//Hook up every-frame handling for our four axes
 	InputComponent->BindAxis("MoveRight", this, &APKPlayer::MoveRight);
+	InputComponent->BindAction("Jump", IE_Pressed, this, &APKPlayer::JumpPressed);
 	
 	InputComponent->BindAction("Spirit", IE_Pressed, this, &APKPlayer::SpiritPressed);
 	InputComponent->BindAction("Armadillo", IE_Pressed, this, &APKPlayer::ArmadilloPressed);
@@ -128,6 +129,24 @@ void APKPlayer::MoveRight(float AxisValue)
 			bisonAnimInstance->State = 0;
 			armadilloAnimInstance->State = 0;
 		}
+	}
+}
+
+void APKPlayer::JumpPressed()
+{
+	switch(state)
+	{
+		case State::Spirit:
+			MovementComponent->Jump(500.0f);
+			break;
+		case State::Armadillo:
+			MovementComponent->Jump(500.0f);
+			break;
+		case State::Jaguar:
+			MovementComponent->Jump(500.0f);
+			break;
+		case State::Bison:
+			break;
 	}
 }
 

@@ -47,6 +47,7 @@ public:
 	
 	//Input functions
 	void MoveRight(float AxisValue);
+	void JumpPressed();
 	
 	void SpiritPressed();
 	void ArmadilloPressed();
