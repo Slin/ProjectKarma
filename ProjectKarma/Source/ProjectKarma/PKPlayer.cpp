@@ -191,7 +191,8 @@ void APKPlayer::SwitchToState(State stateParam)
 		}
 		case State::Armadillo:
 		{
-			boxSize = FVector(40.0f, 20.0f, 13.5f);
+//			boxSize = FVector(40.0f, 20.0f, 13.5f);
+			boxSize = FVector(15.0f, 15.0f, 13.5f);
 			ArmadilloMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
 			movementSpeed = 2.0f;
 			
