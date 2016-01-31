@@ -56,6 +56,14 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	{
 		_isGrounded = false;
 	}
+	
+/*	if(_isGrounded)
+	{
+		FVector normal = Hit.Normal;
+		normal.X = 0.0f;
+		normal.Normalize();
+		UpdatedComponent->SetWorldRotation(FQuat(normal, 0.0f));
+	}*/
 };
 
 void UPKPlayerMovementComponent::Jump(float strength)

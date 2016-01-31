@@ -141,10 +141,10 @@ void APKPlayer::JumpPressed()
 			MovementComponent->Jump(500.0f);
 			break;
 		case State::Armadillo:
-			MovementComponent->Jump(500.0f);
+			MovementComponent->Jump(400.0f);
 			break;
 		case State::Jaguar:
-			MovementComponent->Jump(500.0f);
+			MovementComponent->Jump(600.0f);
 			break;
 		case State::Bison:
 			break;
@@ -202,7 +202,7 @@ void APKPlayer::SwitchToState(State stateParam)
 		{
 			boxSize = FVector(85.0f, 50.0f, 35.0f);
 			PumaMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
-			movementSpeed = 3.0f;
+			movementSpeed = 4.0f;
 			break;
 		}
 		case State::Bison:
