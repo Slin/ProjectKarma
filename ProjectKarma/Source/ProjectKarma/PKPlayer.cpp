@@ -56,6 +56,7 @@ void APKPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MovementComponent->bestX = GetActorLocation(GetRootComponent()).X;
 	SwitchToState(State::Spirit);
 }
 

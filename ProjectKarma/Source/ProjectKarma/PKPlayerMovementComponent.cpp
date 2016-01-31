@@ -17,7 +17,7 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	SafeMoveUpdatedComponent(FVector(0.0f, 0.0f, 20.0f), UpdatedComponent->GetComponentRotation(), true, Hit);
 	
 	// Get (and then clear) the movement vector that we set in ACollidingPawn::Tick
-	FVector DesiredMovementThisFrame = ConsumeInputVector() * DeltaTime * 150.0f;
+	FVector DesiredMovementThisFrame = ConsumeInputVector() * DeltaTime * 150.0f + FVector(bestX-UpdatedComponent->GetComponentLocation().X, 0.0f, 0.0f);
 	
 	if(!DesiredMovementThisFrame.IsNearlyZero())
 	{
@@ -49,7 +49,7 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 			_isGrounded = false;
 		}
 		
-		SlideAlongSurface(DesiredGravityMovement, 1.f - Hit.Time, Hit.Normal, Hit);
+//		SlideAlongSurface(DesiredGravityMovement, 1.f - Hit.Time, Hit.Normal, Hit);
 		_gravity = 0.0f;
 	}
 	else

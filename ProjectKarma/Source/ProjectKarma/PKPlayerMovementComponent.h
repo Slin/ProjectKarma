@@ -18,6 +18,8 @@ public:
 	
 	void Jump(float strength);
 	
+	float bestX;
+	
 private:
 	float _gravity;
 	bool _isGrounded;
