@@ -195,12 +195,11 @@ void APKPlayer::SwitchToState(State stateParam)
 			boxSize = FVector(15.0f, 15.0f, 13.5f);
 			ArmadilloMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
 			movementSpeed = 2.0f;
-			
 			break;
 		}
 		case State::Jaguar:
 		{
-			boxSize = FVector(85.0f, 28.0f, 37.0f);
+			boxSize = FVector(85.0f, 50.0f, 35.0f);
 			PumaMeshComponent->SetRelativeLocation(FVector(0.0f, 0.0f, -boxSize.Z));
 			movementSpeed = 3.0f;
 			break;
