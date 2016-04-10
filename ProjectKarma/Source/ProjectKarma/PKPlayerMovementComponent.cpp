@@ -13,44 +13,54 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 		return;
 	}
 	
-	FHitResult Hit;
-	SafeMoveUpdatedComponent(FVector(0.0f, 0.0f, 20.0f), UpdatedComponent->GetComponentRotation(), true, Hit);
+	FHitResult movementHit;
+	SafeMoveUpdatedComponent(FVector(0.0f, 0.0f, 20.0f), UpdatedComponent->GetComponentRotation(), true, movementHit);
 	
 	// Get (and then clear) the movement vector that we set in ACollidingPawn::Tick
 	FVector DesiredMovementThisFrame = ConsumeInputVector() * DeltaTime * 150.0f + FVector(bestX-UpdatedComponent->GetComponentLocation().X, 0.0f, 0.0f);
 	
 	if(!DesiredMovementThisFrame.IsNearlyZero())
 	{
-		SafeMoveUpdatedComponent(DesiredMovementThisFrame, UpdatedComponent->GetComponentRotation(), true, Hit);
+		SafeMoveUpdatedComponent(DesiredMovementThisFrame, UpdatedComponent->GetComponentRotation(), true, movementHit);
 		
 		// If we bumped into something, try to slide along it
-		if (Hit.IsValidBlockingHit())
+		if (movementHit.IsValidBlockingHit())
 		{
-			SlideAlongSurface(DesiredMovementThisFrame, 1.f - Hit.Time, Hit.Normal, Hit);
+			SlideAlongSurface(DesiredMovementThisFrame, 1.f - movementHit.Time, movementHit.Normal, movementHit);
 		}
 	}
-	
-	SafeMoveUpdatedComponent(FVector(0.0f, 0.0f, -20.0f), UpdatedComponent->GetComponentRotation(), true, Hit);
-	
+
+	const FVector StartTrace = UpdatedComponent->GetComponentLocation();
+	const FVector EndTrace = StartTrace + UpdatedComponent->GetComponentRotation().RotateVector(FVector(0.0f, 0.0f, _isGrounded?-100.0f:-22.0f));
+
+	// Perform trace to retrieve hit info
+	FCollisionQueryParams TraceParams(FName(TEXT("IsGroundedTrace")), true, PawnOwner);
+	TraceParams.bTraceAsyncScene = true;
+	TraceParams.bReturnPhysicalMaterial = false;
+
 	_gravity -= 981.0f*DeltaTime;
-	FVector DesiredGravityMovement(0.0f, 0.0f, _gravity*DeltaTime);
-	
-	SafeMoveUpdatedComponent(DesiredGravityMovement, UpdatedComponent->GetComponentRotation(), true, Hit);
+
+	FHitResult traceHit;
+	float downCorrection = 20.0f;
+	if(GetWorld()->LineTraceSingleByChannel(traceHit, StartTrace, EndTrace, ECC_GameTraceChannel1, TraceParams) && _gravity < 0.0f && _isGrounded)
+	{
+		downCorrection = traceHit.Distance;
+	}
+
+	SafeMoveUpdatedComponent(FVector(0.0f, 0.0f, -downCorrection+_gravity*DeltaTime), UpdatedComponent->GetComponentRotation(), true, movementHit);
 	
 	// If we bumped into something, try to slide along it
-	if(Hit.IsValidBlockingHit())
+	if(traceHit.IsValidBlockingHit() || movementHit.IsValidBlockingHit())
 	{
 		if(_gravity < 0.0f)
 		{
 			_isGrounded = true;
+			_gravity = 0.0f;
 		}
 		else
 		{
 			_isGrounded = false;
 		}
-		
-//		SlideAlongSurface(DesiredGravityMovement, 1.f - Hit.Time, Hit.Normal, Hit);
-		_gravity = 0.0f;
 	}
 	else
 	{
@@ -69,5 +79,7 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 void UPKPlayerMovementComponent::Jump(float strength)
 {
 	if(_isGrounded)
+	{
 		_gravity = strength;
+	}
 }
