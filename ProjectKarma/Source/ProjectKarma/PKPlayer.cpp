@@ -138,13 +138,14 @@ void APKPlayer::JumpPressed()
 	switch(state)
 	{
 		case State::Spirit:
-			MovementComponent->Jump(500.0f);
+			break;
+			MovementComponent->Jump(600.0f);
 			break;
 		case State::Armadillo:
-			MovementComponent->Jump(400.0f);
+			MovementComponent->Jump(500.0f);
 			break;
 		case State::Jaguar:
-			MovementComponent->Jump(600.0f);
+			MovementComponent->Jump(750.0f);
 			break;
 		case State::Bison:
 			break;

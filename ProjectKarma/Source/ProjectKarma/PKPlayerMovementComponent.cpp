@@ -31,14 +31,14 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	}
 
 	const FVector StartTrace = UpdatedComponent->GetComponentLocation();
-	const FVector EndTrace = StartTrace + UpdatedComponent->GetComponentRotation().RotateVector(FVector(0.0f, 0.0f, _isGrounded?-100.0f:-22.0f));
+	const FVector EndTrace = StartTrace + FVector(0.0f, 0.0f, _isGrounded ? -100.0f : -22.0f);
 
 	// Perform trace to retrieve hit info
 	FCollisionQueryParams TraceParams(FName(TEXT("IsGroundedTrace")), true, PawnOwner);
 	TraceParams.bTraceAsyncScene = true;
 	TraceParams.bReturnPhysicalMaterial = false;
 
-	_gravity -= 981.0f*DeltaTime;
+	_gravity -= 1100.0f*DeltaTime;
 
 	FHitResult traceHit;
 	float downCorrection = 20.0f;
@@ -69,10 +69,18 @@ void UPKPlayerMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 	
 /*	if(_isGrounded)
 	{
-		FVector normal = Hit.Normal;
-		normal.X = 0.0f;
+		FVector normal = traceHit.Normal;
+
+//		normal.X = 1.0f;
+		float tempX = normal.X;
+		normal.X = 0.5f;// normal.Z;
+		normal.Z = 0.5f;// -tempX;
+		normal.Y = 0.0f;
+//		normal.Z = 0.0f;
 		normal.Normalize();
-		UpdatedComponent->SetWorldRotation(FQuat(normal, 0.0f));
+		FRotator rotation = normal.Rotation();
+		FRotator compRotation = UpdatedComponent->GetComponentRotation();
+		UpdatedComponent->SetWorldRotation(rotation);
 	}*/
 };
 
